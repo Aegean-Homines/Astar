@@ -1,6 +1,9 @@
 #ifndef ASTAR
 #define ASTAR
 
+#include <vector>
+#include "graph.h"
+
 //callback object for Astar
 template <typename GraphType, typename AstarType>
 class Callback {
@@ -26,6 +29,11 @@ class Astar {
             start_id(0),
             goal_id(0)
         {}
+
+		typedef std::vector<typename GraphType::Edge> OpenListContainer;
+		typedef std::vector<typename GraphType::Edge> ClosedListContainer;
+		typedef std::vector<typename GraphType::Edge> SolutionContainer;
+
         ////////////////////////////////////////////////////////////
         // this function should not be used in the actual code
         void sample_function(size_t s, size_t g) {
