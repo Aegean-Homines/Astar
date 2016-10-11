@@ -55,6 +55,7 @@ struct Test0Heuristic {
     }
 };
 
+//#FirstTest
 void test0() {
     /*       (B)
              /     \
@@ -370,11 +371,12 @@ struct VertexGrid {
 };
 
 
+// #HEURISTICDEFINITIONS
 //standard Euclidian heuristic, admissible and consistent when num/den==1. num
 //and den allow a multiplier which may speed up the search when num/den>1,
 //notice that search may become suboptimal
 template <typename GraphType, int num =1, int den=1>
-// num / den  is a heuristic multiplier (inadmissble heuristic if num > den )
+// num / den  is a heuristic multiplier (inadmissible heuristic if num > den )
 struct EuclidianHeuristic {
     typedef float ReturnType;
     ReturnType operator () (const GraphType &, 
@@ -479,48 +481,24 @@ struct ZeroHeuristic {
 template <typename GraphType, typename AstarType>
 class Callback2 : public Callback<GraphType,AstarType> {
     public:
-        Callback2( GraphType const& _g) : Callback<GraphType,AstarType>(_g) {}
+        Callback2( GraphType const& _g) : Callback<GraphType,AstarType>(_g) {
+			
+		}
         virtual void OnIteration( AstarType const& search ) { 
             typename AstarType::OpenListContainer::const_iterator it_op_b = search.GetOpenListBegin(), it_op_e = search.GetOpenListEnd();
             std::cout << "===============================================\n";
-            std::cout << "Openlist ";
+			std::cout << "Openlist: " << std::endl;
             for ( ; it_op_b != it_op_e; ++it_op_b) {
-                typename GraphType::Vertex const& v = this->g.GetVertex( it_op_b->id );
-                std::cout << /*it_op_b->id<<" from " << it_op_b->parent <<*/"("<<v.X()<<","<<v.Y()<<")  ";
-            }
-            std::cout << std::endl;
-
-            typename AstarType::ClosedListContainer::const_iterator it_cl_b = search.GetClosedListBegin(), it_cl_e = search.GetClosedListEnd();
-            std::cout << "Closedlist ";
-            for ( ; it_cl_b != it_cl_e; ++it_cl_b) {
-                typename GraphType::Vertex const& v = this->g.GetVertex( it_cl_b->second.id );
-                std::cout << /*it_cl_b->second.id<<*/"("<<v.X()<<","<<v.Y()<<")  ";
-            }
-            std::cout << std::endl;
-
-
-            typename AstarType::Node const& top = search.GetTopElement();
-            size_t top_id = top.id;
-            size_t parent_id = top.parent;
-            typename GraphType::Vertex const& v_top = this->g.GetVertex( top_id );
-            std::cout << "Trace from openlist top ";
-            std::cout << "((("<<v_top.X()<<","<<v_top.Y()<<")))--";
-
-            std::vector<size_t> trace = search.TraceToStart( parent_id );
-            std::vector<size_t>::const_iterator 
-                it_trace_b = trace.begin(),
-                           it_trace_e = trace.end();
-            for ( ; it_trace_b != it_trace_e; ++it_trace_b) {
-                typename GraphType::Vertex const& v = this->g.GetVertex( *it_trace_b );
-                std::cout << "("<<v.X()<<","<<v.Y()<<")--";
+                typename GraphType::Vertex const& v = this->g.GetVertex( (*it_op_b)->);
+				std::cout << it_op_b->id << std::endl;
             }
             std::cout << std::endl;
         }
         virtual void OnFinish( AstarType const& search )    {
             //get top element and trace it back to start of the search
-            size_t top_id = search.GetGoalID();
+            //size_t top_id = search.GetGoalID();
 
-            std::vector<size_t> trace = search.TraceToStart( top_id );
+            /*std::vector<size_t> trace = search.TraceToStart( top_id );
             std::cout << "Solution ";
             std::vector<size_t>::const_iterator 
                 it_trace_b = trace.begin(),
@@ -529,7 +507,7 @@ class Callback2 : public Callback<GraphType,AstarType> {
                 typename GraphType::Vertex const& v = this->g.GetVertex( *it_trace_b );
                 std::cout << "("<<v.X()<<","<<v.Y()<<")--";
             }
-            std::cout << std::endl;
+            std::cout << std::endl;*/
         }
 };
 
@@ -626,6 +604,7 @@ class Callback3 : public Callback<GraphType,AstarType> {
 
     ////////////////////////////////////////////////////////////////////////
     virtual void OnIteration( AstarType const& search ) {
+		std::cout << "OnIteration of Callback3" << std::endl;
         //create next "frame_counter.bmp"
         char current_frame[128];
         sprintf(current_frame,"frame_%06u.bmp",static_cast<unsigned>(counter++) );
